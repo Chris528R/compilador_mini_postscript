@@ -1,0 +1,27 @@
+<LINE>  :   
+        | <LINE> "\n"
+        | <LINE> <ASGN> "\n"
+        | <LINE> <STMT> "\n"
+        | <LINE> <EXPR> "\n"
+        | <LINE> <ERROR> "\n"
+        | <LINE> <DEFN> "\n"
+        | <LINE> <POSTSCRIPT> "\n"
+
+<POSTSCRIPT> : BEGIN NOMBRE <STMT> END
+
+<STMT> : <EXPR>
+       | 
+
+<EXPR> : <FIGURA>
+       | <ASGN>
+
+<FIGURA> : LINEA NUMBER NUMBER NUMBER NUMBER
+         | CIRCULO NUMBER NUMBER NUMBER
+         | RECTANGULO NUMBER NUMBER NUMBER NUMBER
+
+<COLOR> : COLOR NUMBER NUMBER NUMBER
+
+
+typedef struct color{
+    int red, green, blue;
+}
