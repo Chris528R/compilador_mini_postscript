@@ -1,0 +1,49 @@
+# Compilador de Lenguaje Gráfico a PostScript
+
+Este proyecto es un compilador desarrollado en **C** utilizando **Flex** (para el análisis léxico) y **Yacc/Bison** (para el análisis sintáctico).
+
+El compilador procesa un lenguaje de programación propio (similar a C/JavaScript) con primitivas gráficas y genera código **PostScript (.ps)** nativo, el cual puede ser visualizado en herramientas como Ghostscript o cualquier visor de PDF/PS.
+
+## 📋 Características Implementadas
+
+Hasta este avance, el lenguaje soporta:
+* **Tipos de Datos:** Números (doubles), Colores y Formas (Línea, Círculo, Rectángulo).
+* **Variables:** Asignación dinámica y tablas de símbolos.
+* **Aritmética:** Operaciones básicas (`+`, `-`, `*`, `/`, `-` unario).
+* **Control de Flujo:**
+    * `if` / `else`
+    * `while`
+    * `for`
+* **Funciones y Procedimientos:**
+    * Definición con `func` (con retorno) y `proc` (void).
+    * Paso de argumentos (`$1`, `$2`, ...).
+    * Recursividad básica.
+* **Gráficos:**
+    * Creación de figuras: `linea`, `circulo`, `rectangulo`.
+    * Renderizado: `stroke` (contorno), `fill` (relleno).
+    * Configuración: `setlinewidth`, `color`.
+
+## ⚙️ Compilación
+Sigue estos pasos para generar el ejecutable `post`. Asegúrate de estar en la carpeta raíz del proyecto.
+
+1. **Generar el analizador sintáctico (Parser):**
+yacc -d postscript.y
+2. **Generar el analizador léxico (Lexer):**
+flex postscript.l
+3. **Compilar y enlazar todo el proyecto:**
+gcc -o post y.tab.c code.c lex.yy.c postscript.c symbol.c -g
+
+## 🚀 Ejecución
+El compilador puede usarse de dos formas:
+
+1. **Modo Archivo:**
+
+Procesa un archivo de texto con tu código fuente y genera el archivo `.ps` de salida definido en el bloque `begin`.
+
+./post pruebas/archivo_prueba.psc
+
+2. **Modo Intérprete**
+
+Ejecuta el compilador esperando entrada directa desde la terminal (stdin). Usa `Ctrl+C` para terminar la entrada.
+
+./post
