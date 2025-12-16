@@ -48,6 +48,13 @@ string      \"[^\"]*\"
 "function"      { return FUNCTION; }
 "procedure"     { return PROCEDURE; }
 
+"texto"         { return TEXTO; }
+"fuente"        { return FUENTE; }
+
+"HELVETICA"     { yylval.narg = 0; return FONT_ID; }
+"TIMES"         { yylval.narg = 1; return FONT_ID; }
+"COURIER"       { yylval.narg = 2; return FONT_ID; }
+
 {id} {
     Symbol *s = lookup(yytext);
     if (!s)

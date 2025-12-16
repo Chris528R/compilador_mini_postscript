@@ -60,33 +60,36 @@ extern int yydebug;
     FUNCTION = 261,                /* FUNCTION  */
     PROCEDURE = 262,               /* PROCEDURE  */
     ARG = 263,                     /* ARG  */
-    BEGIN_POST = 264,              /* BEGIN_POST  */
-    END_POST = 265,                /* END_POST  */
-    LINEA = 266,                   /* LINEA  */
-    CIRCULO = 267,                 /* CIRCULO  */
-    RECTANGULO = 268,              /* RECTANGULO  */
-    COLOR = 269,                   /* COLOR  */
-    STROKE = 270,                  /* STROKE  */
-    FILL = 271,                    /* FILL  */
-    SETLINEWIDTH = 272,            /* SETLINEWIDTH  */
-    IF = 273,                      /* IF  */
-    ELSE = 274,                    /* ELSE  */
-    WHILE = 275,                   /* WHILE  */
-    FOR = 276,                     /* FOR  */
-    FUNC = 277,                    /* FUNC  */
-    PROC = 278,                    /* PROC  */
-    RETURN = 279,                  /* RETURN  */
-    PRINT = 280,                   /* PRINT  */
-    GT = 281,                      /* GT  */
-    GE = 282,                      /* GE  */
-    LT = 283,                      /* LT  */
-    LE = 284,                      /* LE  */
-    EQ = 285,                      /* EQ  */
-    NE = 286,                      /* NE  */
-    AND = 287,                     /* AND  */
-    OR = 288,                      /* OR  */
-    NOT = 289,                     /* NOT  */
-    UNARYMINUS = 290               /* UNARYMINUS  */
+    FONT_ID = 264,                 /* FONT_ID  */
+    BEGIN_POST = 265,              /* BEGIN_POST  */
+    END_POST = 266,                /* END_POST  */
+    LINEA = 267,                   /* LINEA  */
+    CIRCULO = 268,                 /* CIRCULO  */
+    RECTANGULO = 269,              /* RECTANGULO  */
+    COLOR = 270,                   /* COLOR  */
+    STROKE = 271,                  /* STROKE  */
+    FILL = 272,                    /* FILL  */
+    SETLINEWIDTH = 273,            /* SETLINEWIDTH  */
+    IF = 274,                      /* IF  */
+    ELSE = 275,                    /* ELSE  */
+    WHILE = 276,                   /* WHILE  */
+    FOR = 277,                     /* FOR  */
+    FUNC = 278,                    /* FUNC  */
+    PROC = 279,                    /* PROC  */
+    RETURN = 280,                  /* RETURN  */
+    PRINT = 281,                   /* PRINT  */
+    GT = 282,                      /* GT  */
+    GE = 283,                      /* GE  */
+    LT = 284,                      /* LT  */
+    LE = 285,                      /* LE  */
+    EQ = 286,                      /* EQ  */
+    NE = 287,                      /* NE  */
+    AND = 288,                     /* AND  */
+    OR = 289,                      /* OR  */
+    NOT = 290,                     /* NOT  */
+    TEXTO = 291,                   /* TEXTO  */
+    FUENTE = 292,                  /* FUENTE  */
+    UNARYMINUS = 293               /* UNARYMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,39 +104,42 @@ extern int yydebug;
 #define FUNCTION 261
 #define PROCEDURE 262
 #define ARG 263
-#define BEGIN_POST 264
-#define END_POST 265
-#define LINEA 266
-#define CIRCULO 267
-#define RECTANGULO 268
-#define COLOR 269
-#define STROKE 270
-#define FILL 271
-#define SETLINEWIDTH 272
-#define IF 273
-#define ELSE 274
-#define WHILE 275
-#define FOR 276
-#define FUNC 277
-#define PROC 278
-#define RETURN 279
-#define PRINT 280
-#define GT 281
-#define GE 282
-#define LT 283
-#define LE 284
-#define EQ 285
-#define NE 286
-#define AND 287
-#define OR 288
-#define NOT 289
-#define UNARYMINUS 290
+#define FONT_ID 264
+#define BEGIN_POST 265
+#define END_POST 266
+#define LINEA 267
+#define CIRCULO 268
+#define RECTANGULO 269
+#define COLOR 270
+#define STROKE 271
+#define FILL 272
+#define SETLINEWIDTH 273
+#define IF 274
+#define ELSE 275
+#define WHILE 276
+#define FOR 277
+#define FUNC 278
+#define PROC 279
+#define RETURN 280
+#define PRINT 281
+#define GT 282
+#define GE 283
+#define LT 284
+#define LE 285
+#define EQ 286
+#define NE 287
+#define AND 288
+#define OR 289
+#define NOT 290
+#define TEXTO 291
+#define FUENTE 292
+#define UNARYMINUS 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 22 "postscript.y"
+#line 24 "postscript.y"
 
     Symbol *sym;
     Inst *inst;
@@ -141,7 +147,7 @@ union YYSTYPE
     int narg;
     char *string;
 
-#line 145 "y.tab.h"
+#line 151 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -5,11 +5,11 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define NSTACK 256
+#define NSTACK 10000
 static Datum stack[NSTACK]; /* la pila */
 static Datum *stackp;       /* siguiente lugar libre en la pila */
 
-#define NPROG 20000
+#define NPROG 50000
 Inst prog[NPROG]; /* la RAM de la máquina VP*/
 Inst *progp;      /* siguiente lugar libre para la generación de código */
 Inst *pc;         /* contador de programa durante la ejecución */
@@ -85,10 +85,10 @@ void eval() {
             result.u.val = d.u.sym->u.v;
             break;
         case VAR_SHAPE:
-            result.u.shape = d.u.sym->u.shape;
+            result.u.shape = d.u.sym->u.shape; /* <--- ESTO FALTABA */
             break;
         case VAR_COLOR:
-            result.u.color = d.u.sym->u.color;
+            result.u.color = d.u.sym->u.color; /* <--- ESTO FALTABA */
             break;
         default:
             execerror("invalid variable type", d.u.sym->name);
@@ -155,10 +155,11 @@ void negate() {
 
 /* Asignación genérica */
 void assign() {
-    Datum d1 = pop(); // variable (Symbol*)
-    Datum d2 = pop(); // valor (Datum con tipo y valor)
+    Datum d1 = pop(); // La variable (Symbol)
+    Datum d2 = pop(); // El valor (Shape, Color, Num...)
     Symbol *s = d1.u.sym;
 
+    /* Si la variable tenía un tipo definido y es diferente, error */
     if (s->type != INDEF_TYPE && s->type != d2.type)
         execerror("type mismatch in assignment to", s->name);
 
@@ -178,7 +179,7 @@ void assign() {
             execerror("invalid type in assignment", s->name);
     }
     
-    push(d2); // Devolver el valor asignado a la pila
+    push(d2); // Devolver el valor a la pila
 }
 
 /* Imprimir valor */
@@ -419,6 +420,72 @@ void code_double(double d) {
         execerror("program too big", (char *)0);
     *(double *)progp = d;
     progp = (Inst *)((double *)progp + 1);
+}
+
+/* Función para leer el string desde el código y empujarlo a la pila */
+void constpush_str() {
+    Datum d;
+    d.type = VAR_STRING;
+    
+    /* Leemos el char* que guardamos justo en la siguiente posición del PC */
+    d.u.str = *(char **)pc;
+    
+    /* Saltamos ese espacio en memoria para que la siguiente instrucción sea válida */
+    pc = (Inst *)((char **)pc + 1);
+    
+    push(d);
+}
+
+/* Configura la fuente en el documento PS */
+void ps_setup_font() {
+    Datum font_id = pop(); 
+    Datum size = pop();
+    
+    if (size.type != VAR_NUM || font_id.type != VAR_NUM)
+        execerror("Tipos incorrectos en fuente()", 0);
+
+    char *fontName;
+    int id = (int)font_id.u.val;
+    
+    /* Mapeo de índices a nombres reales de PostScript */
+    switch(id) {
+        case 0: fontName = "Helvetica"; break;
+        case 1: fontName = "Times-Roman"; break;
+        case 2: fontName = "Courier"; break;
+        default: fontName = "Helvetica"; break;
+    }
+    
+    ps_append("/%s findfont %.2f scalefont setfont\n", fontName, size.u.val);
+}
+
+/* Genera el comando para dibujar texto */
+void ps_draw_text() {
+    Datum d_color = pop(); //color
+    Datum d_str = pop(); //strijg
+    Datum d_y = pop(); //Y
+    Datum d_x = pop(); //X
+    
+    /* Validaciones */
+    if (d_str.type != VAR_STRING) 
+        execerror("El tercer argumento de texto() debe ser una cadena", 0);
+    
+    /* Configurar Color en PS */
+    PSColor *c;
+    
+    /* Manejo robusto: Si es VAR_NUM (puntero) o VAR_COLOR */
+    if (d_color.type == VAR_NUM) {
+        c = (PSColor *)(long)d_color.u.val;
+    } else if (d_color.type == VAR_COLOR) {
+        c = d_color.u.color;
+    } else {
+        execerror("El cuarto argumento debe ser un color válido", 0);
+    }
+    
+    ps_append("%.3f %.3f %.3f setrgbcolor\n", c->r, c->g, c->b);
+
+    /* Dibujar Texto */
+    ps_append("%.2f %.2f moveto\n", d_x.u.val, d_y.u.val);
+    ps_append("(%s) show\n", d_str.u.str);
 }
 
 void execute(Inst *p) {

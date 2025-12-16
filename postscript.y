@@ -13,6 +13,8 @@ void fpecatch();
 
 extern int lineno;
 extern Inst prog[];
+
+#define NPROG 50000
 int indef = 0;
 
 #define code2(c1, c2)   code(c1); code(c2)
@@ -31,12 +33,13 @@ int indef = 0;
 %token <dval> NUMBER
 %token <string> STRING
 %token <sym> VAR FUNCTION PROCEDURE
-%token <narg> ARG
+%token <narg> ARG FONT_ID
 %token BEGIN_POST END_POST
 %token LINEA CIRCULO RECTANGULO
 %token COLOR STROKE FILL SETLINEWIDTH
 %token IF ELSE WHILE FOR FUNC PROC RETURN PRINT
 %token GT GE LT LE EQ NE AND OR NOT
+%token TEXTO FUENTE
 
 %type <inst> list stmt stmtlist expr asgn fig_stmt dibujar_stmt
 %type <inst> cond while if end for forexpr begin
@@ -115,13 +118,13 @@ fig_stmt:
 dibujar_stmt:
       STROKE '(' VAR ',' VAR ')' {
           // stroke(shape, color)
-          Inst *start = code3(varpush, (Inst)$3, eval); //SHAPE
+          $$ = code3(varpush, (Inst)$3, eval);
           code3(varpush, (Inst)$5, eval); //COLOR
           code(ps_stroke);
       }
     | FILL '(' VAR ',' VAR ')' {
           // fill(shape, color)
-          Inst *start = code3(varpush, (Inst)$3, eval);
+          $$ = code3(varpush, (Inst)$3, eval);
           code3(varpush, (Inst)$5, eval);
           code(ps_fill);
       }
@@ -168,6 +171,45 @@ stmt:
           $$ = $2;
           code3(call, (Inst)$1, (Inst)(long)$4);
       }
+    | FUENTE '(' FONT_ID ',' expr ')' {
+          /* El código empieza donde empieza la expresión del tamaño ($5) */
+          $$ = $5; 
+          
+          /* Generación de código:
+             1. expr ($5) ya generó el código para empujar el TAMAÑO.
+             2. Ahora generamos código para empujar el ID DE FUENTE.
+          */
+          code(constpush_n);
+          code_double((double)$3); 
+          
+          code(ps_setup_font);
+
+    }
+    | TEXTO '(' expr ',' expr ',' STRING ',' VAR ')' {
+          /* Estructura: texto(x, y, "Hola", rojo) */
+          /* $3=x, $5=y, $7="Hola", $9=rojo(VAR) */
+          
+          Inst *start = $3; /* Guardamos inicio de X */
+          
+          /* 1. X y Y ya generaron su código (expr) */
+          
+          /* 2. Empujar el String Literal */
+          code(constpush_str);
+          
+          if ((char*)progp + sizeof(char*) > (char*)&prog[NPROG])
+                execerror("program too big (string)", (char *)0);
+          *(char **)progp = $7; 
+          progp = (Inst *)((char **)progp + 1);
+
+          /* 3. Empujar y Evaluar la Variable de COLOR ($9) */
+          /* Esto busca 'rojo' y pone su valor en la pila */
+          code3(varpush, (Inst)$9, eval); 
+
+          /* 4. Llamar a dibujar */
+          code(ps_draw_text);
+          
+          $$ = start; 
+    }
     ;
 
 for: FOR { $$ = code3(forcode, STOP, STOP); code3(STOP, STOP, STOP); }

@@ -11,7 +11,8 @@ typedef enum {
     VAR_COLOR,      // Variable de color
     TYPE_FUNCTION,       // Función (retorna valor)
     TYPE_PROCEDURE,      // Procedimiento (no retorna valor)
-    BLTIN_TYPE      // Built-in function
+    BLTIN_TYPE,      // Built-in function
+    VAR_STRING     // Variable de texto
 } SymbolType;
 
 typedef struct Symbol { /* entrada de la tabla de símbolos */
@@ -40,6 +41,7 @@ typedef struct Datum {
         PSShape     *shape;     /* puntero a forma */
         PSColor     *color;     /* puntero a color */
         Symbol      *sym;       /* puntero a símbolo */
+        char *str;              /* puntero a texto */
     } u;
 } Datum;
 
@@ -108,5 +110,10 @@ extern void create_color(void);
 extern void ps_stroke(void);
 extern void ps_fill(void);
 extern void ps_setlinewidth(void);
+
+/* Funciones para la creación y utilización de Textos */
+extern void constpush_str(void);  // Para empujar strings literales
+extern void ps_setup_font(void);  // Configurar fuente
+extern void ps_draw_text(void);   // Dibujar texto
 
 #endif /* SYMBOL_H */

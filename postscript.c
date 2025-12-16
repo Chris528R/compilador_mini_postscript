@@ -139,8 +139,8 @@ void create_line_shape(void) {
     PSShape *shape = create_line(d1.u.val, d2.u.val, d3.u.val, d4.u.val);
     
     Datum result;
-    result.type = VAR_NUM;  // Usar tipo compatible con sistema existente
-    result.u.val = (double)(long)shape;  // Guardar puntero como double
+    result.type = VAR_SHAPE;
+    result.u.shape = shape;
     push(result);
 }
 
@@ -152,8 +152,8 @@ void create_circle_shape(void) {
     PSShape *shape = create_circle(d1.u.val, d2.u.val, d3.u.val);
     
     Datum result;
-    result.type = VAR_NUM;
-    result.u.val = (double)(long)shape;
+    result.type = VAR_SHAPE;
+    result.u.shape = shape;
     push(result);
 }
 
@@ -166,8 +166,8 @@ void create_rect_shape(void) {
     PSShape *shape = create_rect(d1.u.val, d2.u.val, d3.u.val, d4.u.val);
     
     Datum result;
-    result.type = VAR_NUM;
-    result.u.val = (double)(long)shape;
+    result.type = VAR_SHAPE;
+    result.u.shape = shape;
     push(result);
 }
 
@@ -179,8 +179,8 @@ void create_color(void) {
     PSColor *color = create_color_rgb(d1.u.val, d2.u.val, d3.u.val);
     
     Datum result;
-    result.type = VAR_NUM;
-    result.u.val = (double)(long)color;
+    result.type = VAR_COLOR;
+    result.u.color = color;
     push(result);
 }
 
@@ -189,8 +189,8 @@ void assign_shape(void) {
     Datum d_shape = pop(); // Shape pointer
     
     Symbol *s = d_var.u.sym;
-    s->type = VAR_NUM;  // Guardamos como número (puntero)
-    s->u.v = d_shape.u.val;
+    s->type = VAR_SHAPE;        
+    s->u.shape = d_shape.u.shape;
     
     push(d_shape);  // Devolver valor
 }
@@ -200,8 +200,8 @@ void assign_color(void) {
     Datum d_color = pop();
     
     Symbol *s = d_var.u.sym;
-    s->type = VAR_NUM;
-    s->u.v = d_color.u.val;
+    s->type = VAR_COLOR;
+    s->u.color = d_color.u.color;
     
     push(d_color);
 }
@@ -244,25 +244,30 @@ void ps_stroke(void) {
     Datum d_color = pop();
     Datum d_shape = pop();
     
-    PSShape *shape = (PSShape *)(long)d_shape.u.val;
-    PSColor *color = (PSColor *)(long)d_color.u.val;
+    /* Validaciones de seguridad */
+    if (d_shape.type != VAR_SHAPE) execerror("stroke espera una figura", 0);
+    
+    /* Recuperar punteros directamente */
+    PSShape *shape = d_shape.u.shape;
+    PSColor *color;
+
+    /* Manejo flexible del color (por si viene de una variable o función) */
+    if (d_color.type == VAR_COLOR) {
+        color = d_color.u.color;
+    } else if (d_color.type == VAR_NUM) {
+        /* Soporte legado por si acaso, pero idealmente ya no se usa */
+        color = (PSColor *)(long)d_color.u.val;
+    } else {
+        execerror("stroke espera un color valido", 0);
+    }
     
     generate_color_ps(color);
     
     switch (shape->type) {
-        case SHAPE_LINE:
-            generate_line_ps(shape);
-            break;
-        case SHAPE_CIRCLE:
-            generate_circle_ps(shape);
-            break;
-        case SHAPE_RECT:
-            generate_rect_ps(shape);
-            break;
-        default:
-            execerror("Tipo de forma desconocido", (char *)0);
+        case SHAPE_LINE: generate_line_ps(shape); break;
+        case SHAPE_CIRCLE: generate_circle_ps(shape); break;
+        case SHAPE_RECT: generate_rect_ps(shape); break;
     }
-    
     ps_append("stroke\n\n");
 }
 
@@ -270,22 +275,26 @@ void ps_fill(void) {
     Datum d_color = pop();
     Datum d_shape = pop();
     
-    PSShape *shape = (PSShape *)(long)d_shape.u.val;
-    PSColor *color = (PSColor *)(long)d_color.u.val;
+    if (d_shape.type != VAR_SHAPE) execerror("fill espera una figura", 0);
+    
+    PSShape *shape = d_shape.u.shape;
+    PSColor *color;
+    
+    if (d_color.type == VAR_COLOR) {
+        color = d_color.u.color;
+    } else if (d_color.type == VAR_NUM) {
+        color = (PSColor *)(long)d_color.u.val;
+    } else {
+        execerror("fill espera un color valido", 0);
+    }
     
     generate_color_ps(color);
     
     switch (shape->type) {
-        case SHAPE_CIRCLE:
-            generate_circle_ps(shape);
-            break;
-        case SHAPE_RECT:
-            generate_rect_ps(shape);
-            break;
-        default:
-            execerror("fill solo aplica a círculos y rectángulos", (char *)0);
+        case SHAPE_CIRCLE: generate_circle_ps(shape); break;
+        case SHAPE_RECT: generate_rect_ps(shape); break;
+        default: execerror("fill solo aplica a circulos y rectangulos", 0);
     }
-    
     ps_append("fill\n\n");
 }
 

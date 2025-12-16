@@ -1,4 +1,5 @@
 begin "test_completo.ps"
+//comentario
 rojo = color(255, 0, 0)
 azul = color(0, 0, 255)
 verde = color(0, 255, 0)
