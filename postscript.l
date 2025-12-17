@@ -55,6 +55,9 @@ string      \"[^\"]*\"
 "TIMES"         { yylval.narg = 1; return FONT_ID; }
 "COURIER"       { yylval.narg = 2; return FONT_ID; }
 
+"sin"           { return SIN; }
+"cos"           { return COS; }
+
 {id} {
     Symbol *s = lookup(yytext);
     if (!s)

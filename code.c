@@ -352,6 +352,11 @@ void define(Symbol *sp) {
 
 void call() {
     Symbol *sp = (Symbol *)pc[0];
+
+    if (sp->type != TYPE_FUNCTION && sp->type != TYPE_PROCEDURE) {
+        execerror(sp->name, "call to undefined function/procedure (or variable)");
+    }
+    
     if(fp++ >= &frame[NFRAME-1])
         execerror(sp->name, "call nested too deeply");
     fp->sp = sp;
@@ -486,6 +491,25 @@ void ps_draw_text() {
     /* Dibujar Texto */
     ps_append("%.2f %.2f moveto\n", d_x.u.val, d_y.u.val);
     ps_append("(%s) show\n", d_str.u.str);
+}
+
+void ps_sin() {
+    Datum d = pop();
+    if (d.type != VAR_NUM)
+        execerror("sin() espera un numero", (char *)0);
+    
+    /* Calculamos seno y volvemos a empujar */
+    d.u.val = sin(d.u.val);
+    push(d);
+}
+
+void ps_cos() {
+    Datum d = pop();
+    if (d.type != VAR_NUM)
+        execerror("cos() espera un numero", (char *)0);
+    
+    d.u.val = cos(d.u.val);
+    push(d);
 }
 
 void execute(Inst *p) {

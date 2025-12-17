@@ -116,4 +116,8 @@ extern void constpush_str(void);  // Para empujar strings literales
 extern void ps_setup_font(void);  // Configurar fuente
 extern void ps_draw_text(void);   // Dibujar texto
 
+/* Funciones trigonometricas */
+extern void ps_sin(void);
+extern void ps_cos(void);
+
 #endif /* SYMBOL_H */

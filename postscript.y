@@ -39,7 +39,7 @@ int indef = 0;
 %token COLOR STROKE FILL SETLINEWIDTH
 %token IF ELSE WHILE FOR FUNC PROC RETURN PRINT
 %token GT GE LT LE EQ NE AND OR NOT
-%token TEXTO FUENTE
+%token TEXTO FUENTE SIN COS
 
 %type <inst> list stmt stmtlist expr asgn fig_stmt dibujar_stmt
 %type <inst> cond while if end for forexpr begin
@@ -136,7 +136,7 @@ dibujar_stmt:
 
 stmt: 
       expr { code(pop1); $$ = $1; }
-    | asgn
+    | asgn { code(pop1); }
     | fig_stmt
     | dibujar_stmt 
     | RETURN { defnonly("return"); code(procret); $$= progp; }
@@ -171,6 +171,11 @@ stmt:
           $$ = $2;
           code3(call, (Inst)$1, (Inst)(long)$4);
       }
+    | VAR begin '(' arglist ')' {
+        /* Permitir llamadas a procedimientos aún no definidos */
+        $$ = $2;
+        code3(call, (Inst)$1, (Inst)(long)$4);
+    }
     | FUENTE '(' FONT_ID ',' expr ')' {
           /* El código empieza donde empieza la expresión del tamaño ($5) */
           $$ = $5; 
@@ -268,6 +273,11 @@ expr:
           $$ = $2;
           code3(call, (Inst)$1, (Inst)(long)$4);
       }
+    | VAR begin '(' arglist ')' {
+        /* Permitir llamadas a funciones aún no definidas */
+        $$ = $2;
+        code3(call, (Inst)$1, (Inst)(long)$4);
+    }
     | expr '+' expr { code(add); $$ = $1; }
     | expr '-' expr { code(sub); $$ = $1; }
     | expr '*' expr { code(mul); $$ = $1; }
@@ -283,6 +293,15 @@ expr:
     | expr AND expr { code(and_op); $$ = $1; }
     | expr OR expr { code(or_op); $$ = $1; }
     | NOT expr { code(not_op); $$ = $2; }
+    | SIN '(' expr ')' { 
+        /* Genera código para expr primero, luego la instrucción sin */
+        $$ = $3; 
+        code(ps_sin); 
+    }
+    | COS '(' expr ')' { 
+        $$ = $3; 
+        code(ps_cos); 
+    }
     ;
 
 

@@ -89,7 +89,9 @@ extern int yydebug;
     NOT = 290,                     /* NOT  */
     TEXTO = 291,                   /* TEXTO  */
     FUENTE = 292,                  /* FUENTE  */
-    UNARYMINUS = 293               /* UNARYMINUS  */
+    SIN = 293,                     /* SIN  */
+    COS = 294,                     /* COS  */
+    UNARYMINUS = 295               /* UNARYMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -133,7 +135,9 @@ extern int yydebug;
 #define NOT 290
 #define TEXTO 291
 #define FUENTE 292
-#define UNARYMINUS 293
+#define SIN 293
+#define COS 294
+#define UNARYMINUS 295
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -147,7 +151,7 @@ union YYSTYPE
     int narg;
     char *string;
 
-#line 151 "y.tab.h"
+#line 155 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
