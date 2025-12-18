@@ -10,7 +10,7 @@ fill(bg, negro)
 
 cx = 306
 cy = 396
-radio = 300
+radio = 300 
 
 // Bucle principal: Círculos concéntricos
 for (i = 0; i < 20; i = i + 1) {

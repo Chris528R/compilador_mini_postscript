@@ -7,7 +7,7 @@ rojo_alerta = color(200, 50, 50)
 verde_exito = color(50, 150, 50)
 negro = color(0, 0, 0)
 
-// 2. Fondo del reporte
+// 2. Fondo del reporte 
 bg = rectangulo(0, 0, 612, 792)
 fill(bg, fondo)
 

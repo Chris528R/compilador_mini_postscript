@@ -6,7 +6,7 @@ negro = color(0, 0, 0)
 setlinewidth(1.5)
 
 // Centro de la hoja
-cx = 306
+cx = 306 
 cy = 396
 
 // Parámetros de la flor
