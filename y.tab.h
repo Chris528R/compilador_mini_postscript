@@ -55,43 +55,52 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     NUMBER = 258,                  /* NUMBER  */
-    STRING = 259,                  /* STRING  */
-    VAR = 260,                     /* VAR  */
-    FUNCTION = 261,                /* FUNCTION  */
-    PROCEDURE = 262,               /* PROCEDURE  */
-    ARG = 263,                     /* ARG  */
-    FONT_ID = 264,                 /* FONT_ID  */
-    BEGIN_POST = 265,              /* BEGIN_POST  */
-    END_POST = 266,                /* END_POST  */
-    LINEA = 267,                   /* LINEA  */
-    CIRCULO = 268,                 /* CIRCULO  */
-    RECTANGULO = 269,              /* RECTANGULO  */
-    COLOR = 270,                   /* COLOR  */
-    STROKE = 271,                  /* STROKE  */
-    FILL = 272,                    /* FILL  */
-    SETLINEWIDTH = 273,            /* SETLINEWIDTH  */
-    IF = 274,                      /* IF  */
-    ELSE = 275,                    /* ELSE  */
-    WHILE = 276,                   /* WHILE  */
-    FOR = 277,                     /* FOR  */
-    FUNC = 278,                    /* FUNC  */
-    PROC = 279,                    /* PROC  */
-    RETURN = 280,                  /* RETURN  */
-    PRINT = 281,                   /* PRINT  */
-    GT = 282,                      /* GT  */
-    GE = 283,                      /* GE  */
-    LT = 284,                      /* LT  */
-    LE = 285,                      /* LE  */
-    EQ = 286,                      /* EQ  */
-    NE = 287,                      /* NE  */
-    AND = 288,                     /* AND  */
-    OR = 289,                      /* OR  */
-    NOT = 290,                     /* NOT  */
-    TEXTO = 291,                   /* TEXTO  */
-    FUENTE = 292,                  /* FUENTE  */
-    SIN = 293,                     /* SIN  */
-    COS = 294,                     /* COS  */
-    UNARYMINUS = 295               /* UNARYMINUS  */
+    PARAM = 259,                   /* PARAM  */
+    FLOAT = 260,                   /* FLOAT  */
+    IDENTIFIER = 261,              /* IDENTIFIER  */
+    STRING = 262,                  /* STRING  */
+    BEGIN_TOKEN = 263,             /* BEGIN_TOKEN  */
+    END_TOKEN = 264,               /* END_TOKEN  */
+    LINE = 265,                    /* LINE  */
+    CIRCLE = 266,                  /* CIRCLE  */
+    RECT = 267,                    /* RECT  */
+    COLOR = 268,                   /* COLOR  */
+    STROKE = 269,                  /* STROKE  */
+    FILL = 270,                    /* FILL  */
+    IF = 271,                      /* IF  */
+    ELSE = 272,                    /* ELSE  */
+    WHILE = 273,                   /* WHILE  */
+    FOR = 274,                     /* FOR  */
+    FUNCTION = 275,                /* FUNCTION  */
+    PROC = 276,                    /* PROC  */
+    RETURN = 277,                  /* RETURN  */
+    SETLINEWIDTH = 278,            /* SETLINEWIDTH  */
+    MOVETO = 279,                  /* MOVETO  */
+    LINETO = 280,                  /* LINETO  */
+    SHOWPAGE = 281,                /* SHOWPAGE  */
+    PRINT = 282,                   /* PRINT  */
+    FUENTE = 283,                  /* FUENTE  */
+    TEXTO = 284,                   /* TEXTO  */
+    HELVETICA = 285,               /* HELVETICA  */
+    TIMES = 286,                   /* TIMES  */
+    COURIER = 287,                 /* COURIER  */
+    SIN = 288,                     /* SIN  */
+    COS = 289,                     /* COS  */
+    TAN = 290,                     /* TAN  */
+    SQRT = 291,                    /* SQRT  */
+    ABS = 292,                     /* ABS  */
+    POW = 293,                     /* POW  */
+    EXP = 294,                     /* EXP  */
+    LOG = 295,                     /* LOG  */
+    FLOOR = 296,                   /* FLOOR  */
+    CEIL = 297,                    /* CEIL  */
+    EQ = 298,                      /* EQ  */
+    NEQ = 299,                     /* NEQ  */
+    LEQ = 300,                     /* LEQ  */
+    GEQ = 301,                     /* GEQ  */
+    AND = 302,                     /* AND  */
+    OR = 303,                      /* OR  */
+    UMINUS = 304                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,57 +110,64 @@ extern int yydebug;
 #define YYerror 256
 #define YYUNDEF 257
 #define NUMBER 258
-#define STRING 259
-#define VAR 260
-#define FUNCTION 261
-#define PROCEDURE 262
-#define ARG 263
-#define FONT_ID 264
-#define BEGIN_POST 265
-#define END_POST 266
-#define LINEA 267
-#define CIRCULO 268
-#define RECTANGULO 269
-#define COLOR 270
-#define STROKE 271
-#define FILL 272
-#define SETLINEWIDTH 273
-#define IF 274
-#define ELSE 275
-#define WHILE 276
-#define FOR 277
-#define FUNC 278
-#define PROC 279
-#define RETURN 280
-#define PRINT 281
-#define GT 282
-#define GE 283
-#define LT 284
-#define LE 285
-#define EQ 286
-#define NE 287
-#define AND 288
-#define OR 289
-#define NOT 290
-#define TEXTO 291
-#define FUENTE 292
-#define SIN 293
-#define COS 294
-#define UNARYMINUS 295
+#define PARAM 259
+#define FLOAT 260
+#define IDENTIFIER 261
+#define STRING 262
+#define BEGIN_TOKEN 263
+#define END_TOKEN 264
+#define LINE 265
+#define CIRCLE 266
+#define RECT 267
+#define COLOR 268
+#define STROKE 269
+#define FILL 270
+#define IF 271
+#define ELSE 272
+#define WHILE 273
+#define FOR 274
+#define FUNCTION 275
+#define PROC 276
+#define RETURN 277
+#define SETLINEWIDTH 278
+#define MOVETO 279
+#define LINETO 280
+#define SHOWPAGE 281
+#define PRINT 282
+#define FUENTE 283
+#define TEXTO 284
+#define HELVETICA 285
+#define TIMES 286
+#define COURIER 287
+#define SIN 288
+#define COS 289
+#define TAN 290
+#define SQRT 291
+#define ABS 292
+#define POW 293
+#define EXP 294
+#define LOG 295
+#define FLOOR 296
+#define CEIL 297
+#define EQ 298
+#define NEQ 299
+#define LEQ 300
+#define GEQ 301
+#define AND 302
+#define OR 303
+#define UMINUS 304
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "postscript.y"
+#line 35 "./postscript.y"
 
-    Symbol *sym;
-    Inst *inst;
-    double dval;
-    int narg;
-    char *string;
+    int num;
+    double fnum;
+    char* str;
 
-#line 155 "y.tab.h"
+#line 171 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

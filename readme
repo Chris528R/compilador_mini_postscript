@@ -1,49 +1,320 @@
-# Compilador de Lenguaje Gráfico a PostScript
+# Transpilador a PostScript
 
-Este proyecto es un compilador desarrollado en **C** utilizando **Flex** (para el análisis léxico) y **Yacc/Bison** (para el análisis sintáctico).
+Este es un transpilador completo que convierte código en un lenguaje personalizado a PostScript usando YACC/Bison y Flex.
 
-El compilador procesa un lenguaje de programación propio (similar a C/JavaScript) con primitivas gráficas y genera código **PostScript (.ps)** nativo, el cual puede ser visualizado en herramientas como Ghostscript o cualquier visor de PDF/PS.
+## Estructura del Proyecto
 
-## 📋 Características Implementadas
+```
+proyecto/
+├── scanner.l         # Analizador léxico (Flex)
+├── parser.y          # Analizador sintáctico (Bison/YACC)
+├── Makefile          # Script de compilación
+├── test.txt          # Ejemplo de código fuente
+└── README.md         # Este archivo
+```
 
-Hasta este avance, el lenguaje soporta:
-* **Tipos de Datos:** Números (doubles), Colores y Formas (Línea, Círculo, Rectángulo).
-* **Variables:** Asignación dinámica y tablas de símbolos.
-* **Aritmética:** Operaciones básicas (`+`, `-`, `*`, `/`, `-` unario).
-* **Control de Flujo:**
-    * `if` / `else`
-    * `while`
-    * `for`
-* **Funciones y Procedimientos:**
-    * Definición con `func` (con retorno) y `proc` (void).
-    * Paso de argumentos (`$1`, `$2`, ...).
-    * Recursividad básica.
-* **Gráficos:**
-    * Creación de figuras: `linea`, `circulo`, `rectangulo`.
-    * Renderizado: `stroke` (contorno), `fill` (relleno).
-    * Configuración: `setlinewidth`, `color`.
+## Requisitos
 
-## ⚙️ Compilación
-Sigue estos pasos para generar el ejecutable `post`. Asegúrate de estar en la carpeta raíz del proyecto.
+- GCC (GNU Compiler Collection)
+- Flex (Fast Lexical Analyzer)
+- Bison o YACC (Yet Another Compiler-Compiler)
+- Make
 
-1. **Generar el analizador sintáctico (Parser):**
-yacc -d postscript.y
-2. **Generar el analizador léxico (Lexer):**
-flex postscript.l
-3. **Compilar y enlazar todo el proyecto:**
-gcc -o post y.tab.c code.c lex.yy.c postscript.c symbol.c -g
+### Instalación en Ubuntu/Debian:
+```bash
+sudo apt-get install gcc flex bison make
+```
 
-## 🚀 Ejecución
-El compilador puede usarse de dos formas:
+### Instalación en macOS:
+```bash
+brew install flex bison make
+```
 
-1. **Modo Archivo:**
+## Compilación
 
-Procesa un archivo de texto con tu código fuente y genera el archivo `.ps` de salida definido en el bloque `begin`.
+```bash
+make
+```
 
-./post pruebas/archivo_prueba.psc
+Esto generará el ejecutable `transpiler`.
 
-2. **Modo Intérprete**
+## Uso
 
-Ejecuta el compilador esperando entrada directa desde la terminal (stdin). Usa `Ctrl+C` para terminar la entrada.
+```bash
+./transpiler <archivo_entrada>
+```
 
-./post
+Ejemplo:
+```bash
+./transpiler test.txt
+```
+
+Esto generará un archivo PostScript (`.ps`) con el nombre especificado en el comando `begin`.
+
+## Sintaxis del Lenguaje
+
+### Estructura Básica
+
+```
+begin "archivo.ps"
+    // Tu código aquí
+end
+```
+
+### Definición de Colores
+
+```
+rojo = color(255, 0, 0);    // R, G, B (0-255)
+azul = color(0, 0, 255);
+```
+
+### Definición de Formas
+
+**Línea:**
+```
+linea1 = line(x1, y1, x2, y2);
+```
+
+**Círculo:**
+```
+circ = circle(x, y, radio);
+```
+
+**Rectángulo:**
+```
+rect1 = rect(x, y, ancho, alto);
+```
+
+### Comandos de Dibujo
+
+**Stroke (contorno):**
+```
+stroke(forma, color);
+```
+
+**Fill (relleno):**
+```
+fill(forma, color);
+```
+
+### Comandos Primitivos de PostScript
+
+```
+setlinewidth(grosor);
+moveto(x, y);
+lineto(x, y);
+showpage();
+```
+
+### Funciones Matemáticas
+
+**Trigonométricas (radianes):**
+```
+y = sin(t);          // Seno
+x = cos(t);          // Coseno
+z = tan(t);          // Tangente
+```
+
+**Otras funciones:**
+```
+raiz = sqrt(16);     // Raíz cuadrada
+valor = abs(-5);     // Valor absoluto
+potencia = pow(2, 3); // 2^3 = 8
+exponencial = exp(2); // e^2
+logaritmo = log(10);  // ln(10)
+entero = floor(3.7);  // 3
+techo = ceil(3.2);    // 4
+```
+
+**Nota importante:** Las funciones trigonométricas trabajan en **radianes**, no grados.
+
+### Estructuras de Control
+
+**Condicionales:**
+```
+if (condicion) {
+    // código
+}
+
+if (condicion) {
+    // código
+} else {
+    // código alternativo
+}
+```
+
+**Ciclos:**
+```
+while (condicion) {
+    // código
+}
+
+for (i = 0; i < 10; i = i + 1) {
+    // código
+}
+```
+
+### Procedimientos Recursivos
+
+Los procedimientos soportan **parámetros posicionales** ($1, $2, $3, $4) que permiten recursión:
+
+```
+proc fractal() {
+    if ($4 > 0) {
+        // $1 = parámetro 1 (Centro X)
+        // $2 = parámetro 2 (Centro Y)
+        // $3 = parámetro 3 (Tamaño)
+        // $4 = parámetro 4 (Nivel)
+        
+        r = rectangulo($1 - $3/2, $2 - $3/2, $3, $3);
+        stroke(r, negro);
+        
+        // Llamada recursiva
+        fractal($1, $2, $3 * 0.5, $4 - 1);
+    }
+}
+
+// Llamar al procedimiento con argumentos
+fractal(300, 400, 200, 5);
+```
+
+### Texto y Fuentes
+
+**Configurar fuente:**
+```
+fuente(HELVETICA, 20);   // Fuente y tamaño
+fuente(TIMES, 16);
+fuente(COURIER, 12);
+```
+
+**Dibujar texto:**
+```
+texto(x, y, "Texto a mostrar", color);
+```
+
+### Operadores
+
+**Aritméticos:** `+`, `-`, `*`, `/`
+
+**Comparación:** `==`, `!=`, `<`, `>`, `<=`, `>=`
+
+**Lógicos:** `&&` (AND), `||` (OR)
+
+### Comentarios
+
+```
+// Comentario de línea
+
+/* Comentario
+   de múltiples
+   líneas */
+```
+
+## Ejemplo Completo: Espirógrafo
+
+```
+begin "espirografo.ps"
+
+// Colores
+azul = color(0, 100, 255);
+morado = color(180, 0, 255);
+blanco = color(255, 255, 255);
+negro = color(0, 0, 0);
+
+// Fondo
+fondo = rectangulo(0, 0, 612, 792);
+fill(fondo, blanco);
+
+// Parámetros del espirógrafo
+R = 220;    // Radio círculo grande
+r = 65;     // Radio círculo pequeño
+d = 120;    // Distancia del punto
+cx = 306;   // Centro X
+cy = 396;   // Centro Y
+
+// Variables
+t = 0;
+max_t = 100;
+step = 0.05;
+first = 1;
+prev_x = 0;
+prev_y = 0;
+
+setlinewidth(0.8);
+
+// Bucle de dibujo
+while (t < max_t) {
+    // Fórmulas del hipotrocoide
+    diff = R - r;
+    term1_x = diff * cos(t);
+    term2_x = d * cos((diff / r) * t);
+    x = cx + term1_x + term2_x;
+    
+    term1_y = diff * sin(t);
+    term2_y = d * sin((diff / r) * t);
+    y = cy + term1_y - term2_y;
+    
+    if (first == 0) {
+        l = linea(prev_x, prev_y, x, y);
+        
+        // Cambiar color según ángulo
+        if (sin(t) > 0) {
+            stroke(l, azul);
+        } else {
+            stroke(l, morado);
+        }
+    }
+    
+    prev_x = x;
+    prev_y = y;
+    first = 0;
+    t = t + step;
+}
+
+fuente(HELVETICA, 16);
+texto(50, 50, "Hipotrocoide", negro);
+
+end
+```
+
+## Visualizar el Resultado
+
+Una vez generado el archivo `.ps`, puedes visualizarlo con:
+
+- **Ghostscript:** `gs archivo.ps`
+- **Evince:** `evince archivo.ps` (Linux)
+- **Preview:** Abrir directamente (macOS)
+- **Convertir a PDF:** `ps2pdf archivo.ps`
+
+## Limpieza
+
+Para eliminar archivos generados:
+
+```bash
+make clean
+```
+
+## ✨ Características Implementadas
+
+✅ Análisis léxico con Flex
+✅ Análisis sintáctico con Bison/YACC
+✅ Definición de colores RGB
+✅ Formas básicas (línea, círculo, rectángulo)
+✅ Comandos stroke y fill
+✅ Comandos primitivos de PostScript
+✅ Variables y tabla de símbolos
+✅ Expresiones aritméticas completas
+✅ **Funciones trigonométricas: sin, cos, tan**
+✅ **Funciones matemáticas: sqrt, abs, pow, exp, log, floor, ceil**
+✅ Estructuras de control (if/else, while, for)
+✅ **Procedimientos recursivos con parámetros posicionales ($1, $2, $3, $4)**
+✅ **Soporte para texto y fuentes (fuente, texto)**
+✅ **Fuentes: HELVETICA, TIMES, COURIER**
+✅ Comentarios de línea y bloque
+✅ Generación de código PostScript válido
+
+## Notas
+
+- Las coordenadas se expresan en puntos PostScript (1/72 pulgadas)
+- El área de dibujo estándar es 612x792 puntos (carta US)
+- Los valores RGB deben estar entre 0-255
