@@ -1,0 +1,79 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  /verde [ 0 255 div 128 255 div 0 255 div ] def
+  /cafe [ 139 255 div 69 255 div 19 255 div ] def
+1 setlinewidth
+/dibujar_rama {
+  20 dict begin
+  /alto exch def
+  /ancho exch def
+  /y exch def
+  /x exch def
+ancho 5 gt
+{
+  /r [ x y ancho alto ] def
+ancho 20 gt
+{
+  gsave
+  cafe aload pop setrgbcolor
+  r 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+}
+{
+  gsave
+  verde aload pop setrgbcolor
+  r 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+} ifelse
+  /nuevo_ancho ancho 0.700000 mul def
+  /nuevo_alto alto 0.700000 mul def
+  /x_izq x nuevo_ancho sub def
+  /y_sig y alto add def
+x_izq y_sig nuevo_ancho nuevo_alto   dibujar_rama
+  /x_der x ancho add def
+x_der y_sig nuevo_ancho nuevo_alto   dibujar_rama
+} if
+  end
+} def
+
+  /suelo [ 0 0 612 50 ] def
+  gsave
+  verde aload pop setrgbcolor
+  suelo 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+280 50 50 150   dibujar_rama
+/Helvetica findfont 20 scalefont setfont
+gsave
+[ 0 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+400 20 moveto
+(Fractal Tree) show
+grestore
+
+% Fin del programa
+showpage

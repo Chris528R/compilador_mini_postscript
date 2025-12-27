@@ -1,11 +1,11 @@
-begin "demo_arte.ps"
+begin "demo_arte"
 
 negro = color(0, 0, 0)
 blanco = color(255, 255, 255)
 rojo = color(255, 0, 0)
 
 // Fondo negro
-bg = rectangulo(0, 0, 612, 792)
+bg = rect(0, 0, 612, 792)
 fill(bg, negro)
 
 cx = 306
@@ -15,23 +15,24 @@ radio = 300
 // Bucle principal: Círculos concéntricos
 for (i = 0; i < 20; i = i + 1) {
     
-    // Alternar color basado en si 'i' es par o impar
-    // (Simulamos modulo con if, ya que no implementamos %)
-    // Usamos una variable auxiliar para calcular paridad
-    
-    c = circulo(cx, cy, radio)
-    
-    // Si i es menor que 10 pintamos blanco, sino rojo (ejemplo simple)
-    // O mejor: Alternamos stroke y fill para efecto artistico
-    
+    c = circle(cx, cy, radio)
+  
+    // Lógica artística:
+    // Los círculos grandes son anillos blancos
+    // Los círculos pequeños (centro) son bordes rojos
     if (radio > 150) {
+        // Dibujamos círculo blanco
         fill(c, blanco)
-        c_inner = circulo(cx, cy, radio - 10)
-        fill(c_inner, negro) // Efecto anillo
+        
+        // Dibujamos círculo negro un poco más pequeño encima
+        // Esto crea el efecto de "anillo"
+        radio_interno = radio - 10
+        c_inner = circle(cx, cy, radio_interno)
+        fill(c_inner, negro) 
     } else {
         stroke(c, rojo)
     }
-    
+   
     radio = radio - 15
 }
 

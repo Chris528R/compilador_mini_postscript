@@ -1,0 +1,72 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  /rojo [ 180 255 div 0 255 div 0 255 div ] def
+1 setlinewidth
+/fractal {
+  20 dict begin
+  /nivel exch def
+  /lado exch def
+  /cy exch def
+  /cx exch def
+nivel 0 gt
+{
+  /mitad lado 2 div def
+  /esquina_x cx mitad sub def
+  /esquina_y cy mitad sub def
+  /r [ esquina_x esquina_y lado lado ] def
+lado 40 lt
+{
+  gsave
+  rojo aload pop setrgbcolor
+  r aload pop rectstroke
+  grestore
+}
+{
+  gsave
+  negro aload pop setrgbcolor
+  r aload pop rectstroke
+  grestore
+} ifelse
+  /nuevo_lado lado 0.450000 mul def
+  /nuevo_nivel nivel 1 sub def
+esquina_x esquina_y lado add nuevo_lado nuevo_nivel   fractal
+esquina_x lado add esquina_y lado add nuevo_lado nuevo_nivel   fractal
+esquina_x lado add esquina_y nuevo_lado nuevo_nivel   fractal
+esquina_x esquina_y nuevo_lado nuevo_nivel   fractal
+cx cy nuevo_lado nuevo_nivel   fractal
+} if
+  end
+} def
+
+/bg [ 0 0 612 792 ] def
+  /blanco [ 255 255 div 255 255 div 255 255 div ] def
+  gsave
+  blanco aload pop setrgbcolor
+  bg 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/Helvetica findfont 20 scalefont setfont
+gsave
+[ 0 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+50 750 moveto
+(Fractal de Vicsek) show
+grestore
+306 396 200 4   fractal
+
+% Fin del programa
+showpage

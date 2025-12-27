@@ -1,320 +1,185 @@
-# Transpilador a PostScript
+# 🎨 Transpilador de Gráficos Vectoriales (DSL a PostScript)
 
-Este es un transpilador completo que convierte código en un lenguaje personalizado a PostScript usando YACC/Bison y Flex.
+Este proyecto es un **transpilador** que convierte un **Lenguaje de Dominio Específico (DSL)** diseñado para gráficos vectoriales y algoritmos recursivos a código **PostScript (PS)** estándar.
 
-## Estructura del Proyecto
+El compilador permite generar figuras geométricas complejas, fractales y gráficas matemáticas utilizando una sintaxis sencilla similar a **C**, manejando automáticamente la gestión de memoria y el renderizado.
 
-```
-proyecto/
-├── scanner.l         # Analizador léxico (Flex)
-├── parser.y          # Analizador sintáctico (Bison/YACC)
-├── Makefile          # Script de compilación
-├── test.txt          # Ejemplo de código fuente
-└── README.md         # Este archivo
-```
+---
 
-## Requisitos
+## 📋 Características
 
-- GCC (GNU Compiler Collection)
-- Flex (Fast Lexical Analyzer)
-- Bison o YACC (Yet Another Compiler-Compiler)
-- Make
+- **Tipado dinámico e inferencia**  
+  Distingue automáticamente entre `Líneas`, `Rectángulos` y `Círculos` para optimizar los comandos de dibujo (`rectstroke` vs `lineto`).
 
-### Instalación en Ubuntu/Debian:
+- **Recursividad real**  
+  Implementación de pila de llamadas con diccionarios locales (`dict stack`) para soportar algoritmos recursivos complejos (Fractales, Hilbert, Árboles).
+
+- **Primitivas gráficas**  
+  Soporte nativo para colores, grosores de línea y transformaciones.
+
+- **Matemáticas**  
+  Librería completa de funciones (`sin`, `cos`, `sqrt`, `pow`, etc.).
+
+- **Modularidad**  
+  Código fuente estructurado en cabeceras, lógica y gramática.
+
+---
+
+## 🚀 Instalación y Compilación
+
+Este proyecto utiliza **Flex** (Lexer), **Bison/Yacc** (Parser) y **GCC**.
+
+### Requisitos
+
+- GCC  
+- Flex  
+- Yacc  
+
+### Compilación
+
+El proyecto se compila de la siguiente forma:
+
 ```bash
-sudo apt-get install gcc flex bison make
+yacc -d postsctip.y
+flex postsctip.l
+gcc -o transpilador ./lex.yy.c ./y.tab.c ./compilador.c -lm 
 ```
-
-### Instalación en macOS:
+## 🛠️ Uso
+Para transpilar un archivo fuente (`.dsl` o `.psc`):
 ```bash
-brew install flex bison make
+./transpilador pruebas/curva_hilbert.dsl
 ```
 
-## Compilación
+El programa generará automáticamente un archivo .ps con el nombre indicado en el bloque begin o basado en el archivo de entrada.
 
-```bash
-make
+## 👁️ Visualización
+
+El archivo PostScript generado puede abrirse con:
+
+* Ghostscript (gs)
+
+* Okular / Evince (Linux)
+
+* Adobe Acrobat Distiller / Illustrator
+
+* PS Viewer Online
+
+📂 Estructura del Proyecto
+```markdown
+.
+├── compiler.h
+├── compiler.c
+├── postscript.l
+├── postscript.y
+└── pruebas/
+    ├── curva_hilbert.psc
+    ├── vicsek.psc
+    ├── arbol.psc
+    ├── espirografo.psc
+    └── dashboard.psc
 ```
+**Ejemplos incluidos**
 
-Esto generará el ejecutable `transpiler`.
+* curva_hilbert.psc – Recursividad avanzada
 
-## Uso
+* vicsek.psc – Fractal de caja
 
-```bash
-./transpiler <archivo_entrada>
-```
+* arbol.psc – Árbol binario recursivo
 
-Ejemplo:
-```bash
-./transpiler test.txt
-```
+* espirografo.psc – Matemáticas y ciclos
 
-Esto generará un archivo PostScript (`.ps`) con el nombre especificado en el comando `begin`.
+* dashboard.psc – Texto y gráficas de barras
 
-## Sintaxis del Lenguaje
+## 🔍 Traducción de Código (Ejemplos)
+### 1️⃣ Ciclo for
 
-### Estructura Básica
-
-```
-begin "archivo.ps"
-    // Tu código aquí
-end
-```
-
-### Definición de Colores
-
-```
-rojo = color(255, 0, 0);    // R, G, B (0-255)
-azul = color(0, 0, 255);
-```
-
-### Definición de Formas
-
-**Línea:**
-```
-linea1 = line(x1, y1, x2, y2);
-```
-
-**Círculo:**
-```
-circ = circle(x, y, radio);
-```
-
-**Rectángulo:**
-```
-rect1 = rect(x, y, ancho, alto);
-```
-
-### Comandos de Dibujo
-
-**Stroke (contorno):**
-```
-stroke(forma, color);
-```
-
-**Fill (relleno):**
-```
-fill(forma, color);
-```
-
-### Comandos Primitivos de PostScript
-
-```
-setlinewidth(grosor);
-moveto(x, y);
-lineto(x, y);
-showpage();
-```
-
-### Funciones Matemáticas
-
-**Trigonométricas (radianes):**
-```
-y = sin(t);          // Seno
-x = cos(t);          // Coseno
-z = tan(t);          // Tangente
-```
-
-**Otras funciones:**
-```
-raiz = sqrt(16);     // Raíz cuadrada
-valor = abs(-5);     // Valor absoluto
-potencia = pow(2, 3); // 2^3 = 8
-exponencial = exp(2); // e^2
-logaritmo = log(10);  // ln(10)
-entero = floor(3.7);  // 3
-techo = ceil(3.2);    // 4
-```
-
-**Nota importante:** Las funciones trigonométricas trabajan en **radianes**, no grados.
-
-### Estructuras de Control
-
-**Condicionales:**
-```
-if (condicion) {
-    // código
-}
-
-if (condicion) {
-    // código
-} else {
-    // código alternativo
-}
-```
-
-**Ciclos:**
-```
-while (condicion) {
-    // código
-}
-
+**PSC**
+```C
 for (i = 0; i < 10; i = i + 1) {
-    // código
+    c = circle(i, i, 5)
+    stroke(c, negro)
 }
 ```
 
-### Procedimientos Recursivos
-
-Los procedimientos soportan **parámetros posicionales** ($1, $2, $3, $4) que permiten recursión:
-
+PostScript
+```postscript
+/i 0 def            % Inicialización
+{
+  i 10 lt           % Condición
+  not { exit } if   % Si es falso, salir
+  
+  % Cuerpo del bucle
+  /c [ i i 5 ] def
+  gsave negro aload pop setrgbcolor
+  c aload pop 0 360 arc stroke grestore
+  
+  /i i 1 add def    % Incremento
+} loop
 ```
-proc fractal() {
-    if ($4 > 0) {
-        // $1 = parámetro 1 (Centro X)
-        // $2 = parámetro 2 (Centro Y)
-        // $3 = parámetro 3 (Tamaño)
-        // $4 = parámetro 4 (Nivel)
-        
-        r = rectangulo($1 - $3/2, $2 - $3/2, $3, $3);
-        stroke(r, negro);
-        
-        // Llamada recursiva
-        fractal($1, $2, $3 * 0.5, $4 - 1);
-    }
+### 2️⃣ Condicional if / else
+
+**DSL**
+```C
+if (radio > 50) {
+    fill(c, rojo)
+} else {
+    stroke(c, azul)
 }
-
-// Llamar al procedimiento con argumentos
-fractal(300, 400, 200, 5);
 ```
 
-### Texto y Fuentes
-
-**Configurar fuente:**
+**PostScript**
 ```
-fuente(HELVETICA, 20);   // Fuente y tamaño
-fuente(TIMES, 16);
-fuente(COURIER, 12);
-```
-
-**Dibujar texto:**
-```
-texto(x, y, "Texto a mostrar", color);
-```
-
-### Operadores
-
-**Aritméticos:** `+`, `-`, `*`, `/`
-
-**Comparación:** `==`, `!=`, `<`, `>`, `<=`, `>=`
-
-**Lógicos:** `&&` (AND), `||` (OR)
-
-### Comentarios
-
-```
-// Comentario de línea
-
-/* Comentario
-   de múltiples
-   líneas */
-```
-
-## Ejemplo Completo: Espirógrafo
-
-```
-begin "espirografo.ps"
-
-// Colores
-azul = color(0, 100, 255);
-morado = color(180, 0, 255);
-blanco = color(255, 255, 255);
-negro = color(0, 0, 0);
-
-// Fondo
-fondo = rectangulo(0, 0, 612, 792);
-fill(fondo, blanco);
-
-// Parámetros del espirógrafo
-R = 220;    // Radio círculo grande
-r = 65;     // Radio círculo pequeño
-d = 120;    // Distancia del punto
-cx = 306;   // Centro X
-cy = 396;   // Centro Y
-
-// Variables
-t = 0;
-max_t = 100;
-step = 0.05;
-first = 1;
-prev_x = 0;
-prev_y = 0;
-
-setlinewidth(0.8);
-
-// Bucle de dibujo
-while (t < max_t) {
-    // Fórmulas del hipotrocoide
-    diff = R - r;
-    term1_x = diff * cos(t);
-    term2_x = d * cos((diff / r) * t);
-    x = cx + term1_x + term2_x;
-    
-    term1_y = diff * sin(t);
-    term2_y = d * sin((diff / r) * t);
-    y = cy + term1_y - term2_y;
-    
-    if (first == 0) {
-        l = linea(prev_x, prev_y, x, y);
-        
-        // Cambiar color según ángulo
-        if (sin(t) > 0) {
-            stroke(l, azul);
-        } else {
-            stroke(l, morado);
-        }
-    }
-    
-    prev_x = x;
-    prev_y = y;
-    first = 0;
-    t = t + step;
+radio 50 gt
+{   
+    % Bloque True
+    gsave rojo aload pop setrgbcolor
+    c aload pop 0 360 arc fill grestore
 }
+{   
+    % Bloque False
+    gsave azul aload pop setrgbcolor
+    c aload pop 0 360 arc stroke grestore
+} ifelse
+```
+### 3️⃣ Procedimientos y Recursividad
 
-fuente(HELVETICA, 16);
-texto(50, 50, "Hipotrocoide", negro);
-
-end
+**DSL**
+```C
+proc mi_funcion(x, y) {
+    nuevo_x = x + 10
+    mi_funcion(nuevo_x, y)
+}
 ```
 
-## Visualizar el Resultado
+**PostScript**
+```
+/mi_funcion {
+  20 dict begin       % Crear Scope Local
+  /y exch def         % Recuperar parámetro 2
+  /x exch def         % Recuperar parámetro 1
+  
+  /nuevo_x x 10 add def
+  
+  nuevo_x y mi_funcion % Llamada recursiva
+  
+  end                 % Destruir Scope Local
+} def
+```
+### 4️⃣ Ciclo while
 
-Una vez generado el archivo `.ps`, puedes visualizarlo con:
-
-- **Ghostscript:** `gs archivo.ps`
-- **Evince:** `evince archivo.ps` (Linux)
-- **Preview:** Abrir directamente (macOS)
-- **Convertir a PDF:** `ps2pdf archivo.ps`
-
-## Limpieza
-
-Para eliminar archivos generados:
-
-```bash
-make clean
+**DSL**
+```C
+while (t < 100) {
+    t = t + 1
+}
 ```
 
-## ✨ Características Implementadas
-
-✅ Análisis léxico con Flex
-✅ Análisis sintáctico con Bison/YACC
-✅ Definición de colores RGB
-✅ Formas básicas (línea, círculo, rectángulo)
-✅ Comandos stroke y fill
-✅ Comandos primitivos de PostScript
-✅ Variables y tabla de símbolos
-✅ Expresiones aritméticas completas
-✅ **Funciones trigonométricas: sin, cos, tan**
-✅ **Funciones matemáticas: sqrt, abs, pow, exp, log, floor, ceil**
-✅ Estructuras de control (if/else, while, for)
-✅ **Procedimientos recursivos con parámetros posicionales ($1, $2, $3, $4)**
-✅ **Soporte para texto y fuentes (fuente, texto)**
-✅ **Fuentes: HELVETICA, TIMES, COURIER**
-✅ Comentarios de línea y bloque
-✅ Generación de código PostScript válido
-
-## Notas
-
-- Las coordenadas se expresan en puntos PostScript (1/72 pulgadas)
-- El área de dibujo estándar es 612x792 puntos (carta US)
-- Los valores RGB deben estar entre 0-255
+**PostScript**
+```
+{
+  t 100 lt          % Evaluar condición
+  not { exit } if   % Salir si falso
+  
+  /t t 1 add store  % Cuerpo
+} loop
+```

@@ -1,0 +1,71 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  /azul_neon [ 0 255 div 100 255 div 255 255 div ] def
+  /morado [ 180 255 div 0 255 div 255 255 div ] def
+1 setlinewidth
+/R 220 def
+/r 65 def
+/d 120 def
+/cx 306 def
+/cy 396 def
+/t 0 def
+/max_t 100 def
+/step 0.100000 def
+/first 1 def
+/prev_x 0 def
+/prev_y 0 def
+{
+t max_t lt
+  not { exit } if
+/diff R r sub def
+/cociente diff r div def
+/arg1 cociente t mul def
+/t1x diff t 57.2958 mul cos mul def
+/t2x d arg1 57.2958 mul cos mul def
+/x cx t1x add t2x add def
+/t1y diff t 57.2958 mul sin mul def
+/t2y d arg1 57.2958 mul sin mul def
+/y cy t1y add t2y sub def
+first 0 eq
+{
+  /l [ prev_x prev_y x y ] def
+/check t 57.2958 mul sin def
+check 0 gt
+{
+  gsave
+  azul_neon aload pop setrgbcolor
+  l aload pop moveto lineto stroke
+  grestore
+}
+{
+  gsave
+  morado aload pop setrgbcolor
+  l aload pop moveto lineto stroke
+  grestore
+} ifelse
+} if
+/prev_x x def
+/prev_y y def
+/first 0 def
+/t t step add def
+} loop
+/Helvetica findfont 16 scalefont setfont
+gsave
+[ 0 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+50 50 moveto
+(Hipotrocoide con Math) show
+grestore
+
+% Fin del programa
+showpage

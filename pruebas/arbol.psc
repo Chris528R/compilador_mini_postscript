@@ -1,31 +1,46 @@
-begin "demo_fractal.ps"
+begin "demo_fractal_arbol"
 
 negro = color(0, 0, 0)
 verde = color(0, 128, 0)
 cafe = color(139, 69, 19)
 setlinewidth(1)
 
-proc dibujar_rama() {
-    if ($3 > 5) {
+// Procedimiento Recursivo del Árbol
+proc dibujar_rama(x, y, ancho, alto) {
+    // Condición de parada: si el ancho es muy delgado, paramos
+    if (ancho > 5) {
         
-        r = rectangulo($1, $2, $3, $4)
+        r = rect(x, y, ancho, alto)
         
-        if ($3 > 20) {
+        // Si la rama es gruesa es tronco (café), si es delgada es hoja (verde)
+        if (ancho > 20) {
             fill(r, cafe)
         } else {
             fill(r, verde)
         }
-        nuevo_ancho = $3 * 0.7
-        nuevo_alto = $4 * 0.7
-        dibujar_rama($1 - nuevo_ancho, $2 + $4, nuevo_ancho, nuevo_alto)
         
-        dibujar_rama($1 + $3, $2 + $4, nuevo_ancho, nuevo_alto)
+        // Calcular dimensiones para las siguientes ramas (70% del tamaño)
+        nuevo_ancho = ancho * 0.7
+        nuevo_alto = alto * 0.7
+        
+        // Calcular nuevas posiciones
+        // Rama Izquierda: Se mueve a la izquierda y sube
+        x_izq = x - nuevo_ancho
+        y_sig = y + alto
+        dibujar_rama(x_izq, y_sig, nuevo_ancho, nuevo_alto)
+        
+        // Rama Derecha: Se mueve a la derecha y sube
+        x_der = x + ancho
+        dibujar_rama(x_der, y_sig, nuevo_ancho, nuevo_alto)
     }
 }
 
-suelo = rectangulo(0, 0, 612, 50)
+// Suelo
+suelo = rect(0, 0, 612, 50)
 fill(suelo, verde)
 
+// Iniciar el árbol
+// Base en X=280, Y=50, Ancho=50, Alto=150
 dibujar_rama(280, 50, 50, 150)
 
 fuente(HELVETICA, 20)

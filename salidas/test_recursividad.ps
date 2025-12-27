@@ -1,0 +1,67 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+/factorial {
+  20 dict begin
+  /x_pos exch def
+  /n exch def
+n 1 le
+{
+  /c [ x_pos 50 5 ] def
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  gsave
+  negro aload pop setrgbcolor
+  c 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+}
+{
+  /prev n 1 sub def
+  /next_x x_pos 40 add def
+prev next_x   factorial
+  /altura n 20 mul def
+  /barra [ x_pos 100 30 altura ] def
+  /azul [ 0 255 div 0 255 div 200 255 div ] def
+  gsave
+  azul aload pop setrgbcolor
+  barra 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/Helvetica findfont 12 scalefont setfont
+  gsave
+  azul aload pop setrgbcolor
+  x_pos 80 moveto
+  (n) show
+  grestore
+} ifelse
+  end
+} def
+
+5 100   factorial
+/Helvetica findfont 20 scalefont setfont
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+gsave
+[ 0 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+50 700 moveto
+(Prueba de Recursividad (Pila de llamadas)) show
+grestore
+
+% Fin del programa
+showpage

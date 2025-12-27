@@ -1,0 +1,58 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  /rojo [ 255 255 div 0 255 div 0 255 div ] def
+1.500000 setlinewidth
+/tunel_recursivo {
+  20 dict begin
+  /nivel exch def
+  /tam exch def
+  /y exch def
+  /x exch def
+nivel 0 gt
+{
+  /mi_rect [ x y tam tam ] def
+  gsave
+  negro aload pop setrgbcolor
+  mi_rect 
+  dup length 3 eq {
+    aload pop 0 360 arc stroke
+  } {
+    aload pop rectstroke
+  } ifelse
+  grestore
+  /nuevo_x x 20 add def
+  /nuevo_y y 20 add def
+  /nuevo_tam tam 40 sub def
+  /nuevo_nivel nivel 1 sub def
+nuevo_x nuevo_y nuevo_tam nuevo_nivel   tunel_recursivo
+  /mx x 5 add def
+  /my y 5 add def
+  /marcador [ mx my 3 ] def
+  gsave
+  rojo aload pop setrgbcolor
+  marcador 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+} if
+  end
+} def
+
+50 50 500 12   tunel_recursivo
+
+% Fin del programa
+showpage

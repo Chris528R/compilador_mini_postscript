@@ -1,0 +1,121 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  /rojo [ 255 255 div 0 255 div 0 255 div ] def
+1.500000 setlinewidth
+/x 50 def
+/y 50 def
+/dir 0 def
+/avanzar {
+  20 dict begin
+  /dist exch def
+  /nx x def
+  /ny y def
+dir 0 eq
+{
+  /nx x dist add def
+} if
+dir 1 eq
+{
+  /ny y dist add def
+} if
+dir 2 eq
+{
+  /nx x dist sub def
+} if
+dir 3 eq
+{
+  /ny y dist sub def
+} if
+  /l [ x y nx ny ] def
+  gsave
+  negro aload pop setrgbcolor
+  l aload pop moveto lineto stroke
+  grestore
+  /x nx store
+  /y ny store
+  end
+} def
+
+/girar {
+  20 dict begin
+  /sentido exch def
+  /dir dir sentido add store
+dir 3 gt
+{
+  /dir 0 store
+} if
+dir 0 lt
+{
+  /dir 3 store
+} if
+  end
+} def
+
+/hilbertB {
+  20 dict begin
+  /paso exch def
+  /nivel exch def
+nivel 0 gt
+{
+1 neg   girar
+  /prev nivel 1 sub def
+prev paso   hilbertA
+paso   avanzar
+1   girar
+prev paso   hilbertB
+paso   avanzar
+prev paso   hilbertB
+1   girar
+paso   avanzar
+prev paso   hilbertA
+1 neg   girar
+} if
+  end
+} def
+
+/hilbertA {
+  20 dict begin
+  /paso exch def
+  /nivel exch def
+nivel 0 gt
+{
+1   girar
+  /prev nivel 1 sub def
+prev paso   hilbertB
+paso   avanzar
+1 neg   girar
+prev paso   hilbertA
+paso   avanzar
+prev paso   hilbertA
+1 neg   girar
+paso   avanzar
+prev paso   hilbertB
+1   girar
+} if
+  end
+} def
+
+/Helvetica findfont 20 scalefont setfont
+gsave
+[ 255 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+50 750 moveto
+(Curva de Hilbert (Nivel 5)) show
+grestore
+/x 50 def
+/y 200 def
+/dir 0 def
+5 12   hilbertA
+
+% Fin del programa
+showpage

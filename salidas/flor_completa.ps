@@ -1,0 +1,133 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /verde [ 34 255 div 139 255 div 34 255 div ] def
+  /rojo [ 220 255 div 20 255 div 60 255 div ] def
+  /amarillo [ 255 255 div 215 255 div 0 255 div ] def
+  /cielo [ 135 255 div 206 255 div 235 255 div ] def
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+/cx 306 def
+/cy 500 def
+  /fondo [ cx cy 1000 ] def
+  gsave
+  cielo aload pop setrgbcolor
+  fondo 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/y 50 def
+{
+y cy lt
+  not { exit } if
+/radio_tallo 15 y 60 div sub def
+radio_tallo 6 lt
+{
+/radio_tallo 6 def
+} if
+  /c [ cx y radio_tallo ] def
+  gsave
+  verde aload pop setrgbcolor
+  c 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/y y 10 add def
+} loop
+/i 0 def
+{
+i 5 lt
+  not { exit } if
+/i i 1 add def
+/hx cx 10 sub i 12 mul sub def
+/hy 200 i 8 mul add def
+/radio_hoja 20 i sub def
+  /hoja [ hx hy radio_hoja ] def
+  gsave
+  verde aload pop setrgbcolor
+  hoja 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+} loop
+/j 0 def
+{
+j 5 lt
+  not { exit } if
+/j j 1 add def
+/hx cx 10 add j 12 mul add def
+/hy 250 j 8 mul add def
+/radio_hoja 20 j sub def
+  /hoja [ hx hy radio_hoja ] def
+  gsave
+  verde aload pop setrgbcolor
+  hoja 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+} loop
+/radio_distancia 70 def
+/num_petalos 12 def
+/radio_petalo 40 def
+/paso 6.283200 num_petalos div def
+/k 0 def
+{
+k num_petalos lt
+  not { exit } if
+/k k 1 add def
+/angulo k paso mul def
+/offset_x radio_distancia angulo 57.2958 mul cos mul def
+/offset_y radio_distancia angulo 57.2958 mul sin mul def
+/px cx offset_x add def
+/py cx offset_y add def
+/py cy offset_y add def
+  /petalo [ px py radio_petalo ] def
+  gsave
+  rojo aload pop setrgbcolor
+  petalo 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+} loop
+  /centro [ cx cy 55 ] def
+  gsave
+  amarillo aload pop setrgbcolor
+  centro 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/Helvetica findfont 20 scalefont setfont
+gsave
+[ 0 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+50 50 moveto
+(Flor hecha solo con Circulos) show
+grestore
+
+% Fin del programa
+showpage

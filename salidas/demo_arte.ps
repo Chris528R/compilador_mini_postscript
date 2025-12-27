@@ -1,0 +1,79 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%Title: Generado por Transpilador
+%%Creator: Transpilador con Funciones Matemáticas
+%%EndComments
+
+% Definir constante PI
+/pi 3.14159265359 def
+
+1 setlinewidth
+/Helvetica findfont 12 scalefont setfont
+
+  /negro [ 0 255 div 0 255 div 0 255 div ] def
+  /blanco [ 255 255 div 255 255 div 255 255 div ] def
+  /rojo [ 255 255 div 0 255 div 0 255 div ] def
+  /bg [ 0 0 612 792 ] def
+  gsave
+  negro aload pop setrgbcolor
+  bg 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/cx 306 def
+/cy 396 def
+/radio 300 def
+/i 0 def
+{
+i 20 lt
+  not { exit } if
+/i i 1 add def
+  /c [ cx cy radio ] def
+radio 150 gt
+{
+  gsave
+  blanco aload pop setrgbcolor
+  c 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+/radio_interno radio 10 sub def
+  /c_inner [ cx cy radio_interno ] def
+  gsave
+  negro aload pop setrgbcolor
+  c_inner 
+  dup length 3 eq {
+    aload pop 0 360 arc fill
+  } {
+    aload pop rectfill
+  } ifelse
+  grestore
+}
+{
+  gsave
+  rojo aload pop setrgbcolor
+  c 
+  dup length 3 eq {
+    aload pop 0 360 arc stroke
+  } {
+    aload pop rectstroke
+  } ifelse
+  grestore
+} ifelse
+/radio radio 15 sub def
+} loop
+/Courier findfont 24 scalefont setfont
+gsave
+[ 255 255 div 0 255 div 0 255 div ] aload pop setrgbcolor
+240 390 moveto
+(GENERATED) show
+grestore
+
+% Fin del programa
+showpage

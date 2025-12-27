@@ -1,35 +1,10 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include "compilador.h"
 
 extern int yylex();
-extern int yyparse();
-extern FILE* yyin;
 void yyerror(const char* s);
+extern FILE* yyin;
 
-int line_num = 1;
-FILE* output_file = NULL;
-char output_filename[256];
-int in_proc = 0;
-char current_proc[64] = "";
-char param_names[20][64]; // Máximo 20 parámetros
-int param_count_def = 0;
-
-typedef struct {
-    char name[64];
-    char type[32];
-    char value[512];
-} Symbol;
-
-Symbol symbol_table[100];
-int symbol_count = 0;
-
-void add_symbol(const char* name, const char* type, const char* value);
-Symbol* find_symbol(const char* name);
-void generate_ps_header();
-void generate_ps_footer();
 %}
 
 %union {
@@ -64,20 +39,10 @@ void generate_ps_footer();
 
 program:
     BEGIN_TOKEN STRING {
-        char* filename = $2 + 1;
-        filename[strlen(filename)-1] = '\0';
-        strcpy(output_filename, filename);
-        output_file = fopen(output_filename, "w");
-        if (!output_file) {
-            fprintf(stderr, "Error: No se puede crear el archivo %s\n", output_filename);
-            exit(1);
-        }
-        generate_ps_header();
+        init_compiler($2);
     }
     statements END_TOKEN {
-        generate_ps_footer();
-        fclose(output_file);
-        printf("Archivo PostScript generado: %s\n", output_filename);
+        finish_compiler();
     }
     ;
 
@@ -87,28 +52,40 @@ statements:
     ;
 
 statement:
-    assignment optional_semicolon
-    | draw_command optional_semicolon
+    assignment
+    | draw_command
     | control_structure
     | proc_def
-    | proc_call optional_semicolon
-    | print_statement optional_semicolon
-    | primitive_command optional_semicolon
-    | text_command optional_semicolon
-    ;
-
-optional_semicolon:
-    /* vacío - el ; es opcional */
-    | ';'
+    | proc_call
+    | print_statement
+    | primitive_command
+    | text_command
     ;
 
 assignment:
     IDENTIFIER '=' expression {
+        // 1. Buscamos si la variable ya existe
+        Symbol* s = find_symbol($1);
+        
+        // 2. Registramos/Actualizamos en la tabla (esto setea is_global si es nueva)
+        add_symbol($1, "variable", $3);
+        
+        // 3. Si la variable era nueva, find_symbol devolvió NULL antes, 
+        // así que la buscamos de nuevo para ver qué decidió add_symbol.
+        if (!s) s = find_symbol($1);
+
         if (in_proc) {
-            fprintf(output_file, "  /%s %s def\n", $1, $3);
+            // DENTRO DE UN PROCEDIMIENTO
+            if (s && s->is_global) {
+                // Es una global (ej: x, y, dir) -> Usamos store para actualizarla
+                fprintf(output_file, "  /%s %s store\n", $1, $3);
+            } else {
+                // Es local nueva o existente local (ej: prev, nx) -> Usamos def
+                fprintf(output_file, "  /%s %s def\n", $1, $3);
+            }
         } else {
-            add_symbol($1, "variable", $3);
-            fprintf(output_file, "/%s %s def\n", $1, $3); 
+            // EN EL MAIN (Siempre def)
+            fprintf(output_file, "/%s %s def\n", $1, $3);
         }
         free($3);
     }
@@ -122,29 +99,31 @@ assignment:
         free($3);
     }
     | IDENTIFIER '=' line_def {
+        // CAMBIO: Registramos el tipo SIEMPRE, estemos en proc o no.
+        add_symbol($1, "line", $3); 
+        
         if (in_proc) {
             fprintf(output_file, "  /%s %s def\n", $1, $3);
         } else {
-            add_symbol($1, "line", $3);
-            fprintf(output_file, "  /%s %s def\n", $1, $3);
+            fprintf(output_file, "/%s %s def\n", $1, $3);
         }
         free($3);
     }
     | IDENTIFIER '=' circle_def {
+        add_symbol($1, "circle", $3); // <-- Sacado del else
         if (in_proc) {
             fprintf(output_file, "  /%s %s def\n", $1, $3);
         } else {
-            add_symbol($1, "circle", $3);
-            fprintf(output_file, "  /%s %s def\n", $1, $3);
+            fprintf(output_file, "/%s %s def\n", $1, $3);
         }
         free($3);
     }
     | IDENTIFIER '=' rect_def {
+        add_symbol($1, "rect", $3); // <-- Sacado del else
         if (in_proc) {
             fprintf(output_file, "  /%s %s def\n", $1, $3);
         } else {
-            add_symbol($1, "rect", $3);
-            fprintf(output_file, "  /%s %s def\n", $1, $3);
+            fprintf(output_file, "/%s %s def\n", $1, $3);
         }
         free($3);
     }
@@ -188,33 +167,34 @@ rect_def:
 
 draw_command:
     STROKE '(' IDENTIFIER ',' IDENTIFIER ')' {
-        // Lógica unificada para Proc y Global
-        // En ambos casos generamos código que asume que las variables existen en PS
-        
         fprintf(output_file, "  gsave\n");
+        fprintf(output_file, "  %s aload pop setrgbcolor\n", $5);
         
-        // 1. Configurar color
-        // Usamos el identificador del color directamente
-        fprintf(output_file, "  %s aload pop setrgbcolor\n", $5); 
+        // Buscamos qué tipo de variable es (line, rect, circle)
+        Symbol* sym = find_symbol($3);
         
-        // 2. Determinar tipo de forma y dibujar
-        // Ponemos el array de la forma en la pila SIN desempaquetarlo aun
-        fprintf(output_file, "  %s \n", $3); 
-        
-        // Verificamos longitud: [x y r] tiene 3, [x y w h] tiene 4
-        fprintf(output_file, "  dup length 3 eq {\n");
-        
-        // RAMA CIRCULO (Longitud 3: x y r)
-        // [x y r] -> aload -> x y r. Agregamos 0 360 arc.
-        fprintf(output_file, "    aload pop 0 360 arc stroke\n");
-        
-        fprintf(output_file, "  } {\n");
-        
-        // RAMA RECTANGULO (Longitud 4: x y w h)
-        // [x y w h] -> aload -> x y w h. Usamos rectstroke directo.
-        fprintf(output_file, "    aload pop rectstroke\n");
-        
-        fprintf(output_file, "  } ifelse\n");
+        if (sym && strcmp(sym->type, "line") == 0) {
+            // ES UNA LÍNEA: [x1 y1 x2 y2] -> moveto lineto
+            fprintf(output_file, "  %s aload pop moveto lineto stroke\n", $3);
+        } 
+        else if (sym && strcmp(sym->type, "rect") == 0) {
+            // ES UN RECTÁNGULO: [x y w h] -> rectstroke
+            fprintf(output_file, "  %s aload pop rectstroke\n", $3);
+        }
+        else if (sym && strcmp(sym->type, "circle") == 0) {
+            // ES UN CÍRCULO: [x y r] -> arc
+            fprintf(output_file, "  %s aload pop 0 360 arc stroke\n", $3);
+        }
+        else {
+            // FALLBACK DINÁMICO (Para parámetros de funciones donde no sabemos el tipo)
+            // Si es un parámetro, usamos la lógica de longitud, pero asumimos RECT por defecto para 4
+            fprintf(output_file, "  %s \n", $3);
+            fprintf(output_file, "  dup length 3 eq {\n");
+            fprintf(output_file, "    aload pop 0 360 arc stroke\n");
+            fprintf(output_file, "  } {\n");
+            fprintf(output_file, "    aload pop rectstroke\n");
+            fprintf(output_file, "  } ifelse\n");
+        }
         fprintf(output_file, "  grestore\n");
     }
     |
@@ -344,18 +324,22 @@ proc_def:
     PROC IDENTIFIER '(' param_def_list ')' '{' {
         fprintf(output_file, "/%s {\n", $2);
         
-        // NUEVO: Generar definiciones dinámicas en orden INVERSO
-        // PostScript es una pila (LIFO), el último argumento está arriba.
+        // NUEVO: Crear un diccionario local para esta ejecución
+        // 20 es el tamaño (suficiente para params y variables locales)
+        fprintf(output_file, "  20 dict begin\n"); 
+
+        // Generar definiciones de parámetros (orden inverso)
         for (int i = param_count_def - 1; i >= 0; i--) {
             fprintf(output_file, "  /%s exch def\n", param_names[i]);
         }
         
-        // Reiniciar contador para la próxima vez
         param_count_def = 0;
-        
         strcpy(current_proc, $2);
         in_proc = 1;
     } statements '}' {
+        // NUEVO: Cerrar el diccionario local antes de terminar la función
+        fprintf(output_file, "  end\n");
+        
         fprintf(output_file, "} def\n\n");
         in_proc = 0;
         current_proc[0] = '\0';
@@ -567,46 +551,6 @@ param_def_item:
     ;
 
 %%
-
-void add_symbol(const char* name, const char* type, const char* value) {
-    for (int i = 0; i < symbol_count; i++) {
-        if (strcmp(symbol_table[i].name, name) == 0) {
-            strcpy(symbol_table[i].type, type);
-            strcpy(symbol_table[i].value, value);
-            return;
-        }
-    }
-    strcpy(symbol_table[symbol_count].name, name);
-    strcpy(symbol_table[symbol_count].type, type);
-    strcpy(symbol_table[symbol_count].value, value);
-    symbol_count++;
-}
-
-Symbol* find_symbol(const char* name) {
-    for (int i = 0; i < symbol_count; i++) {
-        if (strcmp(symbol_table[i].name, name) == 0) {
-            return &symbol_table[i];
-        }
-    }
-    return NULL;
-}
-
-void generate_ps_header() {
-    fprintf(output_file, "%%!PS-Adobe-3.0\n");
-    fprintf(output_file, "%%%%BoundingBox: 0 0 612 792\n");
-    fprintf(output_file, "%%%%Title: Generado por Transpilador\n");
-    fprintf(output_file, "%%%%Creator: Transpilador con Funciones Matemáticas\n");
-    fprintf(output_file, "%%%%EndComments\n\n");
-    fprintf(output_file, "%% Definir constante PI\n");
-    fprintf(output_file, "/pi 3.14159265359 def\n\n");
-    fprintf(output_file, "1 setlinewidth\n");
-    fprintf(output_file, "/Helvetica findfont 12 scalefont setfont\n\n");
-}
-
-void generate_ps_footer() {
-    fprintf(output_file, "\n%% Fin del programa\n");
-    fprintf(output_file, "showpage\n");
-}
 
 void yyerror(const char* s) {
     fprintf(stderr, "Error en línea %d: %s\n", line_num, s);

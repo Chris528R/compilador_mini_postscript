@@ -1,30 +1,19 @@
-begin "test_completo.ps"
-//comentario
+begin "test_fix.ps"
+
+// Rectangulo: x=50, y=50, w=100, h=50
+r1 = rect(50, 50, 100, 50)
 rojo = color(255, 0, 0)
+stroke(r1, rojo)
+
+// Circulo: x=200, y=75, radio=25
+c1 = circle(200, 75, 25)
 azul = color(0, 0, 255)
+fill(c1, azul)
+
+// Prueba superpuesta para verificar coordenadas
+// Este rectangulo debe empezar exactamente donde termina el rojo
+r2 = rect(150, 50, 50, 50)
 verde = color(0, 255, 0)
-negro = color(0, 0, 0)
-setlinewidth(2)
-proc dibujar_diana() {
-    grande = circulo($1, $2, $3)
-    stroke(grande, negro)
-    
-    pequeno = circulo($1, $2, $3 / 2)
-    fill(pequeno, rojo)
-}
-func siguiente_salto() {
-    return $1 + 100
-}
-x = 100
-y = 400
-for (i = 0; i < 5; i = i + 1) {
-    if (i < 3) {
-        dibujar_diana(x, y, 40)
-    } else {
-        r = rectangulo(x - 40, y - 40, 80, 80)
-        fill(r, azul)
-        stroke(r, verde)
-    }
-    x = siguiente_salto(x)
-}
+fill(r2, verde)
+
 end
