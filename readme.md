@@ -45,7 +45,7 @@ flex postsctip.l
 gcc -o transpilador ./lex.yy.c ./y.tab.c ./compilador.c -lm 
 ```
 ## 🛠️ Uso
-Para transpilar un archivo fuente (`.dsl` o `.psc`):
+Para transpilar un archivo fuente (`.psc`):
 ```bash
 ./transpilador pruebas/curva_hilbert.dsl
 ```
@@ -128,7 +128,7 @@ if (radio > 50) {
 ```
 
 **PostScript**
-```
+```postscript
 radio 50 gt
 {   
     % Bloque True
@@ -152,7 +152,7 @@ proc mi_funcion(x, y) {
 ```
 
 **PostScript**
-```
+```postscript
 /mi_funcion {
   20 dict begin       % Crear Scope Local
   /y exch def         % Recuperar parámetro 2
@@ -175,7 +175,7 @@ while (t < 100) {
 ```
 
 **PostScript**
-```
+```postscript
 {
   t 100 lt          % Evaluar condición
   not { exit } if   % Salir si falso
