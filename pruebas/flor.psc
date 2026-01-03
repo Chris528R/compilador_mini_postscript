@@ -1,4 +1,4 @@
-begin "flor_completa"
+begin "flor_completa.ps"
 
 // --- Configuración de Colores ---
 verde = color(34, 139, 34)

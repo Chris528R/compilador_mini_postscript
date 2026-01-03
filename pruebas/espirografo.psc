@@ -1,4 +1,4 @@
-begin "espirografo"
+begin "espirografo.ps"
 
 negro = color(0, 0, 0)
 azul_neon = color(0, 100, 255)

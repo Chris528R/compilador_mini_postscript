@@ -324,8 +324,6 @@ proc_def:
     PROC IDENTIFIER '(' param_def_list ')' '{' {
         fprintf(output_file, "/%s {\n", $2);
         
-        // NUEVO: Crear un diccionario local para esta ejecución
-        // 20 es el tamaño (suficiente para params y variables locales)
         fprintf(output_file, "  20 dict begin\n"); 
 
         // Generar definiciones de parámetros (orden inverso)
@@ -337,7 +335,6 @@ proc_def:
         strcpy(current_proc, $2);
         in_proc = 1;
     } statements '}' {
-        // NUEVO: Cerrar el diccionario local antes de terminar la función
         fprintf(output_file, "  end\n");
         
         fprintf(output_file, "} def\n\n");
@@ -566,7 +563,7 @@ int main(int argc, char** argv) {
         yyin = input;
     }
     
-    printf("Transpilador de PostScript con funciones matemáticas iniciado...\n");
+    printf("Compilador a PostScript:\n");
     yyparse();
     printf("Transpilación completada exitosamente.\n");
     

@@ -1,4 +1,4 @@
-begin "curva_hilbert"
+begin "curva_hilbert.ps"
 
 // --- Configuración ---
 negro = color(0, 0, 0)

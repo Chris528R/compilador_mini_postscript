@@ -1,4 +1,4 @@
-begin "cuadricula"
+begin "cuadricula.ps"
 
 // Configuración
 ancho = 50

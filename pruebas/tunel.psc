@@ -1,4 +1,4 @@
-begin "demo_arte"
+begin "demo_arte.ps"
 
 negro = color(0, 0, 0)
 blanco = color(255, 255, 255)

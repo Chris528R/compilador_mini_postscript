@@ -1,4 +1,4 @@
-begin "concentric_circles"
+begin "concentric_circles.ps"
 
 // Configuración inicial
 cx = 300

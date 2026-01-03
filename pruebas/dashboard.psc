@@ -1,4 +1,4 @@
-begin "dashboard_ventas"
+begin "dashboard_ventas.ps"
 
 // 1. Colores Corporativos
 fondo = color(240, 240, 240)

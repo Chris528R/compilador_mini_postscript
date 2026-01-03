@@ -1,45 +1,40 @@
-begin "vicsek"
+begin "vicsek.ps"
 
 negro = color(0, 0, 0)
 rojo = color(180, 0, 0)
 setlinewidth(1)
 
-// Procedimiento Recursivo con nombres claros
+// Procedimiento recursivo: Fractal de Vicsek clásico
 proc fractal(cx, cy, lado, nivel) {
-    if (nivel > 0) {
-        
-        // Dibujar cuadrado central
-        mitad = lado / 2
-        esquina_x = cx - mitad
-        esquina_y = cy - mitad
-        
-        r = rect(esquina_x, esquina_y, lado, lado)
-        
-        if (lado < 40) {
-            stroke(r, rojo)
-        } else {
-            stroke(r, negro)
-        }
 
-        // --- Recursividad ---
-        nuevo_lado = lado * 0.45
+    if (nivel == 0) {
+        // Dibujar el cuadrado final
+        mitad = lado / 2
+        x = cx - mitad
+        y = cy - mitad
+
+        r = rect(x, y, lado, lado)
+        stroke(r, negro)
+    } else {
+
+        nuevo_lado = lado / 3
         nuevo_nivel = nivel - 1
-        
-        // Calcular offsets para las 4 esquinas
-        // Superior Izquierda
-        fractal(esquina_x, esquina_y + lado, nuevo_lado, nuevo_nivel)
-        
-        // Superior Derecha
-        fractal(esquina_x + lado, esquina_y + lado, nuevo_lado, nuevo_nivel)
-        
-        // Inferior Derecha
-        fractal(esquina_x + lado, esquina_y, nuevo_lado, nuevo_nivel)
-        
-        // Inferior Izquierda
-        fractal(esquina_x, esquina_y, nuevo_lado, nuevo_nivel)
-        
-        // Centro (Vicsek en cruz también lleva centro, opcional)
+        offset = lado / 3
+
+        // Centro
         fractal(cx, cy, nuevo_lado, nuevo_nivel)
+
+        // Arriba
+        fractal(cx, cy + offset, nuevo_lado, nuevo_nivel)
+
+        // Abajo
+        fractal(cx, cy - offset, nuevo_lado, nuevo_nivel)
+
+        // Izquierda
+        fractal(cx - offset, cy, nuevo_lado, nuevo_nivel)
+
+        // Derecha
+        fractal(cx + offset, cy, nuevo_lado, nuevo_nivel)
     }
 }
 
@@ -52,6 +47,6 @@ fuente(HELVETICA, 20)
 texto(50, 750, "Fractal de Vicsek", negro)
 
 // Iniciar en el centro de la hoja
-fractal(306, 396, 200, 4)
+fractal(306, 396, 243, 4)
 
 end

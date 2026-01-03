@@ -1,4 +1,4 @@
-begin "recursivo"
+begin "recursivo.ps"
 
 negro = color(0, 0, 0)
 rojo = color(255, 0, 0)

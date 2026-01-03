@@ -1,4 +1,4 @@
-begin "demo_fractal_arbol"
+begin "demo_fractal_arbol.ps"
 
 negro = color(0, 0, 0)
 verde = color(0, 128, 0)
